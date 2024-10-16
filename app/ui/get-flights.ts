@@ -30,7 +30,7 @@ export async function getFlights(params: Promise<{ airport: string }>) {
 
   console.log(JSON.stringify(data, null, 2))
 
-  return data.data
+  return data.data as Flight[]
 }
 
 // Utils
@@ -45,4 +45,29 @@ function getBounds(latitude: number, longitude: number) {
 
   // Return bounding box format expected by FR24
   return `${northEast.latitude},${southWest.latitude},${southWest.longitude},${northEast.longitude}`
+}
+
+export type Flight = {
+  fr24_id: string
+  flight: string
+  callsign: string
+  lat: number
+  lon: number
+  track: number
+  alt: number
+  gspeed: number
+  vspeed: number
+  squawk: string
+  timestamp: string
+  source: string
+  hex: string
+  type: string
+  reg: string
+  painted_as: string
+  operating_as: string
+  orig_iata: string
+  orig_icao: string
+  dest_iata: string
+  dest_icao: string
+  eta: string
 }

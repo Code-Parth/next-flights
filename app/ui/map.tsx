@@ -1,4 +1,5 @@
 import { fakeGeocode } from "@/app/ui/fake-geocode"
+import { type Flight } from "@/app/ui/get-flights"
 import { getBoundsOfDistance } from "geolib"
 import Image from "next/image"
 
@@ -9,7 +10,7 @@ export async function Map({
   flights,
   params,
 }: {
-  flights: any[] // TODO
+  flights: Flight[]
   params: Promise<{ airport: string }>
 }) {
   const mapUrl = await createUrl({ flights, params })
@@ -30,7 +31,7 @@ async function createUrl({
   flights,
   params,
 }: {
-  flights?: any[]
+  flights: Flight[]
   params: Promise<{ airport: string }>
 }) {
   const { airport } = await params
