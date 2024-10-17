@@ -1,4 +1,4 @@
-import { fakeGeocode } from "@/app/ui/fake-geocode"
+import { geocode } from "@/app/ui/geocode"
 import { type Flight } from "@/app/ui/get-flights"
 import { getBoundsOfDistance } from "geolib"
 import Image from "next/image"
@@ -37,7 +37,7 @@ async function createUrl({
   const { airport } = await params
   const baseUrl = "https://api.mapbox.com/styles/v1/mapbox/streets-v12/static"
 
-  const { latitude, longitude } = fakeGeocode(airport)
+  const { latitude, longitude } = geocode(airport)
   const bounds = getBounds(latitude, longitude)
 
   const urlQuery = new URLSearchParams({

@@ -1,9 +1,9 @@
-import { fakeGeocode } from "@/app/ui/fake-geocode"
+import { geocode } from "@/app/ui/geocode"
 import { getBoundsOfDistance } from "geolib"
 
 export async function getFlights(params: Promise<{ airport: string }>) {
   const { airport } = await params
-  const { latitude, longitude } = fakeGeocode(airport)
+  const { latitude, longitude } = geocode(airport)
 
   const baseUrl =
     "https://fr24api.flightradar24.com/api/live/flight-positions/full"
@@ -23,7 +23,9 @@ export async function getFlights(params: Promise<{ airport: string }>) {
   })
 
   if (!response.ok) {
-    throw new Error(`HTTP error! Status: ${response.status}`)
+    throw new Error(
+      `Failed to fetch plane details: ${response.status} ${response.statusText}`,
+    )
   }
 
   const data = await response.json()
