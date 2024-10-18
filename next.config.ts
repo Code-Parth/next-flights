@@ -1,11 +1,11 @@
-import type { NextConfig } from "next"
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "api.mapbox.com",
+        protocol: 'https',
+        hostname: 'api.mapbox.com',
       },
     ],
   },
@@ -13,6 +13,6 @@ const nextConfig: NextConfig = {
     dynamicIO: true,
     // serverComponentsHmrCache: false,
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;

@@ -1,5 +1,5 @@
-import { FlightActivity } from "@/app/ui/flight-activity"
-import { PlaneDetails } from "@/app/ui/plane-details"
+import { FlightActivity } from '@/app/ui/flight-activity';
+import { PlaneDetails } from '@/app/ui/plane-details';
 
 export default function Page({ params }: { params: Params }) {
   return (
@@ -7,7 +7,7 @@ export default function Page({ params }: { params: Params }) {
       <PlaneDetails params={params} />
       <FlightActivity params={params} />
     </div>
-  )
+  );
 }
 
-type Params = Promise<{ id: string }>
+type Params = Promise<{ id: string }>;

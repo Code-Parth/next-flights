@@ -2,30 +2,30 @@ async function getPlaneDetails(id: string) {
   // Hard code ACME plane
   // Pick a nice model and source information
   return {
-    registration_number: "N152FE",
-    model_name: "Airbus A320",
-    model_code: "A320",
-    miles_flown: "100000",
-    engines_count: "2",
-    engines_type: "Turbofan",
-    plane_age: "10",
-    plane_status: "active",
-    description: "...",
+    registration_number: 'N152FE',
+    model_name: 'Airbus A320',
+    model_code: 'A320',
+    miles_flown: '100000',
+    engines_count: '2',
+    engines_type: 'Turbofan',
+    plane_age: '10',
+    plane_status: 'active',
+    description: '...',
     airline: {
-      name: "ACME Airline",
-      code: "ACME",
-      country: "USA",
+      name: 'ACME Airline',
+      code: 'ACME',
+      country: 'USA',
     },
-  }
+  };
 }
 
 export async function PlaneDetails({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }) {
-  const id = (await params).id
-  const plane = await getPlaneDetails(id)
+  const id = (await params).id;
+  const plane = await getPlaneDetails(id);
 
   return (
     <div>
@@ -42,5 +42,5 @@ export async function PlaneDetails({
       <h3>{plane.plane_status}</h3>
       <p>{plane.description}</p>
     </div>
-  )
+  );
 }

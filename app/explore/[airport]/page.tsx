@@ -1,5 +1,6 @@
-import { getFlights } from "@/app/ui/get-flights";
-import { Map } from "@/app/ui/map-2";
+import { getFlights } from '@/app/ui/get-flights';
+import { Map } from '@/app/ui/map-2';
+
 
 export default async function Page({ params }: { params: Params }) {
   const flights = await getFlights(params);

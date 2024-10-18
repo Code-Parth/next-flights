@@ -1,4 +1,4 @@
-import Link from "next/link"
+import Link from 'next/link';
 
 export default async function Page() {
   return (
@@ -7,5 +7,5 @@ export default async function Page() {
         View flights near San Francisco International Airport (SFO)
       </Link>
     </div>
-  )
+  );
 }
