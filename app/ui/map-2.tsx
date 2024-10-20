@@ -11,14 +11,15 @@ import {
 } from 'react';
 import { MapType } from './types';
 import { MapContext } from '@/app/hooks/use-map';
-import { Flight } from './get-flights';
+import { AirportMarker } from './airport-marker';
+
 
 const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN as string;
 
 if (!mapboxToken) throw new Error('NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN is not set');
 
-const INITIAL_CENTER = [-122.3552, 37.1575] as const satisfies LngLatLike;
-const INITIAL_ZOOM = 5.52;
+const INITIAL_CENTER = [-122.45218475296957, 37.66019807169039] as const satisfies LngLatLike;
+const INITIAL_ZOOM = 9;
 
 interface MapProviderProps {
   children?: ReactNode;
@@ -57,7 +58,6 @@ export function MapProvider({ children, mapContainerRef }: MapProviderProps) {
 }
 
 interface MapProps {
-  flights: Flight[];
   params: Promise<{ airport: string }>;
 }
 
@@ -70,7 +70,10 @@ export function Map({ children }: PropsWithChildren<MapProps>) {
         ref={mapContainerRef}
         className="absolute inset-0 h-full w-full"
       />
-      <MapProvider mapContainerRef={mapContainerRef}>{children}</MapProvider>
+      <MapProvider mapContainerRef={mapContainerRef}>
+        <AirportMarker />
+        {children}
+        </MapProvider>
     </div>
   );
 }

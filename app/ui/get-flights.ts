@@ -9,7 +9,7 @@ export async function getFlights(params: Promise<{ airport: string }>) {
     'https://fr24api.flightradar24.com/api/live/flight-positions/full';
 
   const query = new URLSearchParams({
-    bounds: getBounds(latitude, longitude), // show planes within 30km of airport
+    bounds: getBounds(latitude, longitude), // show planes within 60km of airport
     altitude_ranges: '100-60000', // show flying planes only
     categories: 'P,C', // show passenger and cargo planes only
   });
@@ -30,15 +30,13 @@ export async function getFlights(params: Promise<{ airport: string }>) {
 
   const data = await response.json();
 
-  console.log(JSON.stringify(data, null, 2));
-
   return data.data as Flight[];
 }
 
 // Utils
 
 function getBounds(latitude: number, longitude: number) {
-  const radius = 30_000;
+  const radius = 60_000;
 
   const [southWest, northEast] = getBoundsOfDistance(
     { latitude, longitude },
@@ -55,6 +53,7 @@ export type Flight = {
   callsign: string;
   lat: number;
   lon: number;
+  /** Current rotation of the plane, expressed in degrees */
   track: number;
   alt: number;
   gspeed: number;

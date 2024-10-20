@@ -1,8 +1,10 @@
 import { getFlightTracks } from '@/app/ui/get-flight-tracks';
 import { getFlights } from '@/app/ui/get-flights';
 import { Map } from '@/app/ui/map-2';
+import { Planes } from '@/app/ui/planes';
 
 export default async function Page({ params }: { params: Params }) {
+  
   const flights = await getFlights(params);
 
   // show when flight is selected:
@@ -10,7 +12,9 @@ export default async function Page({ params }: { params: Params }) {
 
   return (
     <div className="w-screen h-screen">
-      <Map flights={flights} params={params}></Map>
+      <Map params={params}>
+        <Planes planes={flights} />
+      </Map>
     </div>
   );
 }
