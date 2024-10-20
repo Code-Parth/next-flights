@@ -42,10 +42,23 @@ export function PlaneTrack({ id, timestamp, currentLat, currentLon }: { id: stri
         },
         paint: {
           'line-color': '#5a91ff',
-          'line-width': 3
-        }
-      });
+          'line-width': 3,
+          'line-opacity': 0,
+          "line-opacity-transition": {
+            duration: 200
+          }
+        },
+      })
+
+      setTimeout(() => {
+        if (signal.aborted || !layerId) return
+
+        map.setPaintProperty(layerId, 'line-opacity', 1)
+      }, 50)
+    }).catch(_e => {
+      // ignore
     })
+
 
     return () => {
       if (layerId && sourceId) {
