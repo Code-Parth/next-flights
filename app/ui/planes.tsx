@@ -3,11 +3,12 @@
 import { Marker } from "mapbox-gl";
 import { useMap } from "../hooks/use-map";
 import { Flight } from "./get-flights";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 
 import Image from 'next/image';
 
 import PlaneMarker from '@/app/assets/plane-marker.svg'
+import { PlaneTrack } from "./flight-track";
 
 /** Based on https://gist.github.com/chriswhong/8977c0d4e869e9eaf06b4e9fda80f3ab */
 class ClickableMarker extends Marker {
@@ -31,7 +32,6 @@ class ClickableMarker extends Marker {
     }
   }
 };
-
 
 interface PlanesProps {
   planes: Flight[];
@@ -87,21 +87,30 @@ export function Planes({planes}: PlanesProps) {
           </div>
       </div>
       {selectedPlaneData && (
-        <div className="fixed bottom-0 w-full left-0 p-2">
-          <div className="relative w-full p-4 text-white bg-black rounded-md border border-gray-500">
-            <div className="flex justify-between gap-4 items-end">
-              <div className="flex flex-col gap-4">
-                <p className="leading-none text-lg">{selectedPlaneData.callsign}</p>
-                <p className="leading-none"><b className="opacity-50">Latitude</b> {selectedPlaneData.lat}</p>
-                <p className="leading-none"><b className="opacity-50">Longitude</b> {selectedPlaneData.lon}</p>
+        <>
+          <div className="fixed bottom-0 w-full left-0 p-2">
+            <div className="relative w-full p-4 text-white bg-black rounded-md border border-gray-500">
+              <div className="flex justify-between gap-4 items-end">
+                <div className="flex flex-col gap-4">
+                  <p className="leading-none text-lg">{selectedPlaneData.callsign}</p>
+                  <p className="leading-none"><b className="opacity-50">Latitude</b> {selectedPlaneData.lat}</p>
+                  <p className="leading-none"><b className="opacity-50">Longitude</b> {selectedPlaneData.lon}</p>
+                </div>
+                <a href={`/flights/${selectedPlaneData.callsign}`} className="p-2 bg-blue leading-none uppercase text-sm font-mono">
+                  Flight details
+                </a>
               </div>
-              <a href={`/flights/${selectedPlaneData.callsign}`} className="p-2 bg-blue leading-none uppercase text-sm font-mono">
-                Flight details
-              </a>
             </div>
           </div>
-        </div>
+          <PlaneTrack
+            id={selectedPlaneData.fr24_id}
+            timestamp={selectedPlaneData.timestamp}
+            currentLat={selectedPlaneData.lat}
+            currentLon={selectedPlaneData.lon}
+          />
+        </>
       )}
     </>
   )
 }
+

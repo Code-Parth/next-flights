@@ -1,3 +1,5 @@
+"use server"
+
 export async function getFlightTracks(id: string) {
   const baseUrl = 'https://fr24api.flightradar24.com/api/flight-tracks';
 
