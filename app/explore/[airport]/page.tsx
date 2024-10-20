@@ -1,6 +1,6 @@
 import { getFlightTracks } from '@/app/ui/get-flight-tracks';
 import { getFlights } from '@/app/ui/get-flights';
-import { Map } from '@/app/ui/map-2';
+import { Map } from '@/app/ui/map';
 import { Planes } from '@/app/ui/planes';
 
 export default async function Page({ params }: { params: Params }) {
