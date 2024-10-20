@@ -7,10 +7,15 @@ const config: Config = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    fontFamily: {
+      sans: ['var(--font-geist-sans)'],
+      mono: ['var(--font-geist-mono)'],
+    },
     extend: {
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
+        blue: '#0057FF'
       },
     },
   },

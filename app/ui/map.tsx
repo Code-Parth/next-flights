@@ -37,6 +37,8 @@ export function MapProvider({ children, mapContainerRef }: MapProviderProps) {
       container: mapContainerRef.current,
       center: INITIAL_CENTER,
       zoom: INITIAL_ZOOM,
+      attributionControl: false,
+      logoPosition: 'top-right',
       style: 'mapbox://styles/mapbox/dark-v11',
     });
 
