@@ -1,7 +1,7 @@
 import { getBoundsOfDistance } from "geolib"
 
 export function getMapBounds(latitude: number, longitude: number) {
-  const radius = 30_000
+  const radius = 20_000
 
   const [southWest, northEast] = getBoundsOfDistance(
     { latitude, longitude },

@@ -13,7 +13,7 @@ export function StaticPlanes({ flights }: { flights: Flight[] }) {
 
   const {airport} = useParams<{airport: string}>()
 
-  const [containerWidth, setContainerWidth] = useState(0)
+  const [containerSize, setContainerSize] = useState(0)
 
   const { latitude, longitude } = geocode(airport)
   const bounds = getMapBounds(latitude, longitude)
@@ -23,23 +23,23 @@ export function StaticPlanes({ flights }: { flights: Flight[] }) {
       const width = document.body.clientWidth
       const height = document.body.clientHeight
 
-      setContainerWidth(Math.max(width, height))
+      setContainerSize(Math.max(width, height))
     }
 
-    document.addEventListener('resize', handleResize)
+    window.addEventListener('resize', handleResize)
     handleResize()
 
     return () => {
-      document.removeEventListener('resize', handleResize)
+      window.removeEventListener('resize', handleResize)
     }
   }, [])
 
-  if(!containerWidth) return null
+  if(!containerSize) return null
 
 
   return (
-    <div className="absolute inset-0 w-full h-full overflow-clip">
-      <div className="relative aspect-square left-1/2 -translate-x-1/2" style={{ width: `${containerWidth}px` }}>
+    <div className="abosolute top-0 left-0 w-full h-full overflow-clip">
+      <div className="relative aspect-square left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2" style={{ width: `${containerSize}px` }}>
         {flights.map((flight) => (
           <PlaneMarker key={flight.fr24_id} bounds={bounds} flight={flight} />
         ))}
@@ -75,7 +75,7 @@ function PlaneMarker({ bounds, flight }: PlaneMarkerProps) {
       className="absolute left-[var(--x)] top-[var(--y)] -rotate-[var(--rotation)] -translate-x-1/2 -translate-y-1/2"
     >
       <div  className="cursor-pointer">
-        <Image width={40} height={40} className="object-contain" src={PlaneMarkerSrc} alt="Plane Marker" />
+        <Image width={40} height={48} className="object-contain rotate-180 w-[40px] h-[48px] block" src={PlaneMarkerSrc} alt="Plane Marker" />
       </div>
     </div>
   )

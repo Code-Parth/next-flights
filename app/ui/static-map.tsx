@@ -17,7 +17,7 @@ export async function StaticMap({
     <Image
       src={mapUrl}
       alt="Map with flight markers"
-      className="object-cover w-full h-full absolute inset-0 left-0 top-0 bg-[#1f1f1f]"
+      className="object-cover w-full h-full absolute inset-0 left-0 top-0"
       width={MAP_WIDTH}
       height={MAP_HEIGHT}
       priority
