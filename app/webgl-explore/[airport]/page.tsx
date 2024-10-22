@@ -3,12 +3,15 @@ import { Map } from '@/app/ui/map';
 import { Planes } from '@/app/ui/planes';
 
 export default async function Page({ params }: { params: Params }) {
+  
   const flights = await getFlights(params);
 
   return (
-    <Map params={params}>
-      <Planes flights={flights} />
-    </Map>
+    <div className="w-screen h-screen">
+      <Map params={params}>
+        <Planes planes={flights} />
+      </Map>
+    </div>
   );
 }
 

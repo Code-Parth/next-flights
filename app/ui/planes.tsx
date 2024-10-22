@@ -1,116 +1,96 @@
-"use client"
+'use client';
 
-import { Marker } from "mapbox-gl";
-import { useMap } from "../hooks/use-map";
-import { Flight } from "./get-flights";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-
+import { CSSProperties, useMemo } from 'react';
+import { Flight } from './get-flights';
+import { geocode } from './geocode';
+import { getMapBounds, MapBounds } from './get-map-bounds';
+import { useParams } from 'next/navigation';
+import PlaneMarkerSrc from '@/app/assets/plane-marker.svg';
 import Image from 'next/image';
+import { usePlanesStore } from '@/app/hooks/use-planes';
+import { clx } from './clx';
 
-import PlaneMarker from '@/app/assets/plane-marker.svg'
-import { PlaneTrack } from "./flight-track";
+export function Planes({ flights }: { flights: Flight[] }) {
+  const { airport } = useParams<{ airport: string }>();
 
-/** Based on https://gist.github.com/chriswhong/8977c0d4e869e9eaf06b4e9fda80f3ab */
-class ClickableMarker extends Marker {
-
-  _handleClick?: () => void;
-
-  // new method onClick, sets _handleClick to a function you pass in
-  onClick(handleClick: () => void) {
-    this._handleClick = handleClick;
-    return this;
-  }
-
-  // the existing _onMapClick was there to trigger a popup
-  // but we are hijacking it to run a function we define
-  _onMapClick(e: any) {
-    const targetElement = e.originalEvent.target;
-    const element = this._element;
-
-    if (this._handleClick && (targetElement === element || element.contains((targetElement)))) {
-      this._handleClick();
-    }
-  }
-};
-
-interface PlanesProps {
-  planes: Flight[];
-}
-
-export function Planes({planes}: PlanesProps) {
-
-  const {map} = useMap();
-
-  const planeMarkerRef = useRef<HTMLDivElement | null>(null);
-
-  const [selectedPlaneIndex, setSelectedPlaneIndex] = useState<number | null>(null);
-
-  const selectedPlaneData = useMemo(() => {
-    if(selectedPlaneIndex === null) return null;
-
-    return planes[selectedPlaneIndex];
-  }, [selectedPlaneIndex, planes])
-
-  useEffect(() => {
-    const planeMarkerEl = planeMarkerRef.current;
-
-    if(!planeMarkerEl) return;
-
-    const planeMarkers = planes.map((plane, index) => {
-      const planeMarker = new ClickableMarker({
-        element: planeMarkerEl.cloneNode(true) as HTMLElement,
-        rotation: plane.track,
-      }).setLngLat([plane.lon, plane.lat])
-      planeMarker.addTo(map);
-
-      planeMarker.onClick(() => {
-        map.flyTo({
-          center: [plane.lon, plane.lat],
-          zoom: 10,
-        })
-        
-        setSelectedPlaneIndex(index);
-      })
-      return planeMarker;
-    });
-
-    return () => {
-      planeMarkers.forEach((marker) => marker.remove());
-    }
-  }, [planes, map]);
+  const { latitude, longitude } = geocode(airport);
+  const bounds = getMapBounds(latitude, longitude);
 
   return (
-    <>
-      <div className="hidden">
-          <div id="plane-marker" ref={planeMarkerRef} className="cursor-pointer">
-            <Image width={40} height={40} className="object-contain" src={PlaneMarker} alt="Plane Marker" />
-          </div>
-      </div>
-      {selectedPlaneData && (
-        <>
-          <div className="fixed bottom-0 w-full left-0 p-2">
-            <div className="relative w-full p-4 text-white bg-black rounded-md border border-gray-500">
-              <div className="flex justify-between gap-4 items-end">
-                <div className="flex flex-col gap-4">
-                  <p className="leading-none text-lg">{selectedPlaneData.callsign}</p>
-                  <p className="leading-none"><b className="opacity-50">Latitude</b> {selectedPlaneData.lat}</p>
-                  <p className="leading-none"><b className="opacity-50">Longitude</b> {selectedPlaneData.lon}</p>
-                </div>
-                <a href={`/flights/${selectedPlaneData.callsign}`} className="p-2 bg-blue leading-none uppercase text-sm font-mono">
-                  Flight details
-                </a>
-              </div>
-            </div>
-          </div>
-          <PlaneTrack
-            id={selectedPlaneData.fr24_id}
-            timestamp={selectedPlaneData.timestamp}
-            currentLat={selectedPlaneData.lat}
-            currentLon={selectedPlaneData.lon}
-          />
-        </>
-      )}
-    </>
-  )
+    <div className="abosolute top-0 left-0 w-full h-full">
+      {flights.map((flight) => (
+        <PlaneMarker key={flight.fr24_id} bounds={bounds} flight={flight} />
+      ))}
+    </div>
+  );
 }
 
+interface PlaneMarkerProps {
+  bounds: MapBounds;
+  flight: Flight;
+}
+
+function PlaneMarker({ bounds, flight }: PlaneMarkerProps) {
+  const selectedFlight = usePlanesStore((s) => s.selectedFlight);
+
+  const isSelected = selectedFlight?.fr24_id === flight.fr24_id;
+
+  const { x, y } = useMemo(() => {
+    const { northEast, southWest } = bounds;
+
+    const x =
+      (flight.lon - southWest.longitude) /
+      (northEast.longitude - southWest.longitude);
+    const y =
+      (flight.lat - southWest.latitude) /
+      (northEast.latitude - southWest.latitude);
+
+    return { x, y };
+  }, [bounds, flight]);
+
+  const rotation = flight.track;
+
+  return (
+    <div
+      style={
+        {
+          '--x': `${x * 100}%`,
+          '--y': `${y * 100}%`,
+          '--rotation': `${rotation}deg`,
+        } as CSSProperties
+      }
+      className="absolute left-[var(--x)] top-[var(--y)] -rotate-[var(--rotation)] -translate-x-1/2 -translate-y-1/2"
+      onClick={(e) => {
+        e.preventDefault();
+        console.log('clicked plane');
+        usePlanesStore.setState({ selectedFlight: flight });
+        const currentUrlParams = new URLSearchParams(window.location.search);
+        currentUrlParams.set('flight', flight.fr24_id);
+        window.history.replaceState(
+          null,
+          '',
+          `${window.location.pathname}?${currentUrlParams.toString()}`,
+        );
+      }}
+    >
+      <div
+        className={clx(
+          'relative cursor-pointer opacity-100 transition-all scale-100 origin-center',
+          {
+            'opacity-60': !isSelected && selectedFlight?.fr24_id,
+            'scale-125': isSelected,
+          },
+        )}
+      >
+        <Image
+          width={40}
+          height={48}
+          className="object-contain rotate-180 w-[40px] h-[48px] block select-none"
+          src={PlaneMarkerSrc}
+          alt="Plane Marker"
+          draggable={false}
+        />
+      </div>
+    </div>
+  );
+}

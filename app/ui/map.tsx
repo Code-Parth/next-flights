@@ -1,81 +1,85 @@
-'use client';
+import { geocode } from '@/app/ui/geocode';
+import Image from 'next/image';
+import { getMapBounds } from './get-map-bounds';
+import { DraggableStaticMap } from './draggable-static-map';
+import { CSSProperties } from 'react';
+import { FlightDetails } from './flight-details';
 
-import mapboxgl, { LngLatLike } from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import {
-  PropsWithChildren,
-  ReactNode,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import { MapType } from './types';
-import { MapContext } from '@/app/hooks/use-map';
-import { AirportMarker } from './airport-marker';
+const MAP_WIDTH = 844;
+const MAP_HEIGHT = 844;
 
-
-const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN as string;
-
-if (!mapboxToken) throw new Error('NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN is not set');
-
-const INITIAL_CENTER = [-122.45218475296957, 37.66019807169039] as const satisfies LngLatLike;
-const INITIAL_ZOOM = 9;
-
-interface MapProviderProps {
-  children?: ReactNode;
-  mapContainerRef: React.RefObject<HTMLDivElement>;
-}
-
-export function MapProvider({ children, mapContainerRef }: MapProviderProps) {
-  const mapRef = useRef<MapType | null>(null);
-  const [isMapReady, setIsMapReady] = useState(false);
-
-  useEffect(() => {
-    if (!mapContainerRef.current) return;
-    mapboxgl.accessToken = mapboxToken;
-    const map = new mapboxgl.Map({
-      container: mapContainerRef.current,
-      center: INITIAL_CENTER,
-      zoom: INITIAL_ZOOM,
-      attributionControl: false,
-      logoPosition: 'top-right',
-      style: 'mapbox://styles/mapbox/dark-v11',
-    });
-
-    mapRef.current = map;
-    setIsMapReady(true);
-
-    return () => {
-      if (map) map.remove();
-    };
-  }, []);
-
-  if (!isMapReady) return null;
-
-  return (
-    <MapContext.Provider value={{ map: mapRef.current! }}>
-      {children}
-    </MapContext.Provider>
-  );
-}
-
-interface MapProps {
+interface StaticMapProps {
   params: Promise<{ airport: string }>;
+  children: React.ReactNode;
 }
 
-export function Map({ children }: PropsWithChildren<MapProps>) {
-  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+const shifts: [number, number][] = [];
+
+for (let i = 0; i < 3; i++) {
+  for (let j = 0; j < 3; j++) {
+    shifts.push([i - 1, j - 1]);
+  }
+}
+
+export async function Map({ params, children }: StaticMapProps) {
+  const mapsUrls = await Promise.all(
+    shifts.map((shift) => createUrl({ params, shift })),
+  );
+
   return (
-    <div className="relative w-full h-full">
-      <div
-        id="map-container"
-        ref={mapContainerRef}
-        className="absolute inset-0 h-full w-full"
-      />
-      <MapProvider mapContainerRef={mapContainerRef}>
-        <AirportMarker />
+    <div className="relative w-screen h-screen overflow-hidden">
+      <DraggableStaticMap>
+        {mapsUrls.map(({ url, shift }) => (
+          <Image
+            key={shift.join(',')}
+            src={url}
+            alt="Map with flight markers"
+            className="object-cover w-full h-full absolute inset-0 left-0 top-0 select-none"
+            style={
+              {
+                '--x': `${shift[0] * 100}%`,
+                '--y': `${-shift[1] * 100}%`,
+                transform: 'translate3d(var(--x), var(--y), 0)',
+              } as CSSProperties
+            }
+            width={MAP_WIDTH}
+            height={MAP_HEIGHT}
+            draggable={false}
+            priority={shift.join(',') === '0,0'}
+          />
+        ))}
         {children}
-        </MapProvider>
+      </DraggableStaticMap>
+      <FlightDetails />
     </div>
   );
+}
+
+// Utils
+
+async function createUrl({
+  params,
+  shift,
+}: {
+  params: Promise<{ airport: string }>;
+  shift: [number, number];
+}) {
+  const { airport } = await params;
+  const baseUrl = 'https://api.mapbox.com/styles/v1/mapbox/dark-v11/static';
+
+  const { latitude, longitude } = geocode(airport);
+  const { southWest, northEast } = getMapBounds(latitude, longitude, shift);
+
+  const urlQuery = new URLSearchParams({
+    access_token: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!,
+  });
+  const urlParams = [];
+
+  // Bounding box format expected by Mapbox
+  const bounds = `[${southWest.longitude},${southWest.latitude},${northEast.longitude},${northEast.latitude}]`;
+  urlParams.push(bounds);
+
+  urlParams.push(`${MAP_WIDTH}x${MAP_HEIGHT}@2x`);
+
+  return { url: `${baseUrl}/${urlParams.join('/')}?${urlQuery}`, shift };
 }
