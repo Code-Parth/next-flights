@@ -1,16 +1,9 @@
 import Image from 'next/image';
 
-import BackgroundGlow from './assets/backgruond-glow.svg';
+import BackgroundGlow from './assets/background-glow.svg';
 import Plane from './assets/plane.svg';
 import Stars from './assets/stars.svg';
-import { PlaneDetailsType } from './types';
-import { planeDetailsEndpoint } from '../utils/constants';
-
-async function getPlaneDetails(id: string) {
-  return await fetch(`${planeDetailsEndpoint}/${id}`).then<PlaneDetailsType>(
-    (x) => x.json(),
-  );
-}
+import { getPlaneDetails } from '../utils/get-plane-details';
 
 export async function PlaneDetails({
   params,
