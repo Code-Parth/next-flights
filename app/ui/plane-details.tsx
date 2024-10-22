@@ -23,12 +23,20 @@ export async function PlaneDetails({
             alt=""
             fill
           />
-          <Image
-            className="absolute inset-0 mix-blend-lighten object-contain"
-            src={Stars}
-            alt="starts"
-            fill
-          />
+          <div className="stars-container absolute inset-0 mix-blend-lighten">
+            <Image
+              className="absolute inset-0 object-contain"
+              src={Stars}
+              alt="starts"
+              fill
+            />
+            <Image
+              className="absolute inset-0 object-contain -translate-x-full"
+              src={Stars}
+              alt="starts"
+              fill
+            />
+          </div>
           <div className="absolute inset-4">
             <Image
               className="absolute inset-0 object-contain"
@@ -48,8 +56,8 @@ export async function PlaneDetails({
       <div className="p-4">
         <div className="flex gap-4 leading-tight text-sm opacity-70">
           <div className="shrink-0">
-            <p className="leading-none">{plane.plane_age} years old</p>
-            <p className="leading-none">{plane.miles_flown} miles</p>
+            <p className="leading-tight">{plane.plane_age} years old</p>
+            <p className="leading-tight">{plane.miles_flown} miles</p>
           </div>
           <p className="text-pretty">{plane.description}</p>
         </div>

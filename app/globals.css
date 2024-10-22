@@ -5,3 +5,16 @@
 img {
   max-width: none;
 }
+
+.stars-container {
+  animation: stars-animation 50s linear infinite;
+}
+
+@keyframes stars-animation {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
