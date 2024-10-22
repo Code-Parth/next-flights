@@ -3,27 +3,13 @@ import Image from 'next/image';
 import BackgroundGlow from './assets/backgruond-glow.svg';
 import Plane from './assets/plane.svg';
 import Stars from './assets/stars.svg';
+import { PlaneDetailsType } from './types';
+import { planeDetailsEndpoint } from './constants';
 
 async function getPlaneDetails(id: string) {
-  // Hard code ACME plane
-  // Pick a nice model and source information
-  return {
-    registration_number: 'N152FE',
-    model_name: 'Airbus A320',
-    model_code: 'A320',
-    miles_flown: '300k',
-    engines_count: '2',
-    engines_type: 'Turbofan',
-    plane_age: '10',
-    plane_status: 'active',
-    description:
-      'The Airbus A320 is one of the most popular commercial aircraft models in the world, often used for short to medium-haul flights.',
-    airline: {
-      name: 'ACME Airways',
-      code: 'ACME',
-      country: 'USA',
-    },
-  };
+  return await fetch(`${planeDetailsEndpoint}/${id}`).then(
+    (x) => x.json() as Promise<PlaneDetailsType>,
+  );
 }
 
 export async function PlaneDetails({
