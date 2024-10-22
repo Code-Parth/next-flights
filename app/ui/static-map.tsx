@@ -3,9 +3,10 @@ import Image from 'next/image';
 import { getMapBounds } from './get-map-bounds';
 import { DraggableStaticMap } from './draggable-static-map';
 import { CSSProperties } from 'react';
+import { FlightDetails } from './flight-details';
 
-const MAP_WIDTH = 1000;
-const MAP_HEIGHT = 1000;
+const MAP_WIDTH = 844;
+const MAP_HEIGHT = 844;
 
 interface StaticMapProps {
   params: Promise<{ airport: string }>;
@@ -26,27 +27,31 @@ export async function StaticMap({ params, children }: StaticMapProps) {
   );
 
   return (
-    <DraggableStaticMap>
-      {mapsUrls.map(({ url, shift }) => (
-        <Image
-          key={shift.join(',')}
-          src={url}
-          alt="Map with flight markers"
-          className="object-cover w-full h-full absolute inset-0 left-0 top-0 select-none translate-x-[var(--x)] translate-y-[var(--y)]"
-          style={
-            {
-              '--x': `${shift[0] * 100}%`,
-              '--y': `${-shift[1] * 100}%`,
-            } as CSSProperties
-          }
-          width={MAP_WIDTH}
-          height={MAP_HEIGHT}
-          draggable={false}
-          priority
-        />
-      ))}
-      {children}
-    </DraggableStaticMap>
+    <>
+      <DraggableStaticMap>
+        {mapsUrls.map(({ url, shift }) => (
+          <Image
+            key={shift.join(',')}
+            src={url}
+            alt="Map with flight markers"
+            className="object-cover w-full h-full absolute inset-0 left-0 top-0 select-none"
+            style={
+              {
+                '--x': `${shift[0] * 100}%`,
+                '--y': `${-shift[1] * 100}%`,
+                transform: 'translate3d(var(--x), var(--y), 0)',
+              } as CSSProperties
+            }
+            width={MAP_WIDTH}
+            height={MAP_HEIGHT}
+            draggable={false}
+            priority={shift.join(',') === '0,0'}
+          />
+        ))}
+        {children}
+      </DraggableStaticMap>
+      <FlightDetails />
+    </>
   );
 }
 
@@ -69,28 +74,6 @@ async function createUrl({
     access_token: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!,
   });
   const urlParams = [];
-  // const markers = []
-
-  // // Add airport marker
-  // markers.push(`pin-s+00ff00(${longitude},${latitude})`)
-
-  // if (flights && flights.length > 0) {
-  //   // Add flight markers
-  //   flights.forEach((flight) => {
-  //     markers.push(`pin-s+ff0000(${flight.lon},${flight.lat})`)
-  //   })
-  //   urlParams.push(markers.join(","))
-
-  //   // automatically determine map center and zoom using the same
-  //   // bounds provided to flights
-  //
-  // } else {
-  //   // When no flights are provided, manually set the center
-  //   // and zoom level using the airport coordinates
-  //   urlParams.push(markers.join(","))
-  // }
-
-  // urlParams.push(`${longitude},${latitude},9`)
 
   // Bounding box format expected by Mapbox
   const bounds = `[${southWest.longitude},${southWest.latitude},${northEast.longitude},${northEast.latitude}]`;
