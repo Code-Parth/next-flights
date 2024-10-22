@@ -132,8 +132,8 @@ export async function FlightActivity({
 
   return (
     <div className="text-white">
-      <h2 className="text-4xl">Recent activity</h2>
-      <div className="py-4">
+      <h2 className="text-4xl p-4">Recent activity</h2>
+      <div className="py-4 px-2">
         {activity.map((flight, i) => (
           <FlightChunkDetail key={i} flight={flight} />
         ))}
