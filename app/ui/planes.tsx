@@ -1,6 +1,6 @@
 'use client';
 
-import { CSSProperties, useMemo } from 'react';
+import { CSSProperties, useEffect, useMemo } from 'react';
 import { Flight } from './get-flights';
 import { geocode } from './geocode';
 import { getMapBounds, MapBounds } from './get-map-bounds';
@@ -9,6 +9,7 @@ import PlaneMarkerSrc from '@/app/assets/plane-marker.svg';
 import Image from 'next/image';
 import { usePlanesStore } from '@/app/hooks/use-planes';
 import { clx } from './clx';
+import { subscribableSetMap } from './draggable-static-map';
 
 export function Planes({ flights }: { flights: Flight[] }) {
   const { airport } = useParams<{ airport: string }>();
@@ -50,6 +51,21 @@ function PlaneMarker({ bounds, flight }: PlaneMarkerProps) {
 
   const rotation = flight.track;
 
+  const mapReady = usePlanesStore((s) => s.mapReady);
+
+  /** Set pre-selected flight from url */
+  useEffect(() => {
+    if (!mapReady) return;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const flightId = urlParams.get('flight');
+    if (flightId === flight.fr24_id) {
+      console.log('setting map');
+      subscribableSetMap.runCallbacks(flight.lat, flight.lon);
+      usePlanesStore.setState({ selectedFlight: flight });
+    }
+  }, [mapReady]);
+
   return (
     <div
       style={
@@ -62,7 +78,6 @@ function PlaneMarker({ bounds, flight }: PlaneMarkerProps) {
       className="absolute left-[var(--x)] top-[var(--y)] -rotate-[var(--rotation)] -translate-x-1/2 -translate-y-1/2"
       onClick={(e) => {
         e.preventDefault();
-        console.log('clicked plane');
         usePlanesStore.setState({ selectedFlight: flight });
         const currentUrlParams = new URLSearchParams(window.location.search);
         currentUrlParams.set('flight', flight.fr24_id);

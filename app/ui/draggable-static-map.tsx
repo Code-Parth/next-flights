@@ -1,9 +1,12 @@
 'use client';
 
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useStateToRef } from '@/app/hooks/use-state-to-ref';
 import { usePlanesStore } from '../hooks/use-planes';
+import { subscribable } from '../utils/subscribable';
+import { geocode } from './geocode';
+import { getMapBounds } from './get-map-bounds';
 
 interface DraggableStaticMapProps {
   children: React.ReactNode;
@@ -11,6 +14,33 @@ interface DraggableStaticMapProps {
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
+
+export const subscribableSetMap =
+  subscribable<(lat: number, log: number) => void>();
+
+function getWindowSize() {
+  const width = document.body.clientWidth;
+  const height = document.body.clientHeight;
+  return Math.max(width, height);
+}
+// (thanks cursor)
+function geoToRelative(lat: number, lng: number) {
+  const { latitude: centerLat, longitude: centerLng } = geocode('sfo');
+  const { southWest, northEast } = getMapBounds(centerLat, centerLng);
+
+  const mapWidth = northEast.longitude - southWest.longitude;
+  const mapHeight = northEast.latitude - southWest.latitude;
+
+  // Calculate the center coordinates
+  const centerLatitude = (northEast.latitude + southWest.latitude) / 2;
+  const centerLongitude = (northEast.longitude + southWest.longitude) / 2;
+
+  // Calculate relative position from the center, ranging from -0.5 to 0.5
+  const relativeLat = (lat - centerLatitude) / mapHeight;
+  const relativeLng = (lng - centerLongitude) / mapWidth;
+
+  return { relativeLat, relativeLng };
+}
 
 export function DraggableStaticMap({ children }: DraggableStaticMapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -58,24 +88,52 @@ export function DraggableStaticMap({ children }: DraggableStaticMapProps) {
     };
   }, []);
 
+  /** Set initial map position */
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-    const width = document.body.clientWidth;
-    const height = document.body.clientHeight;
+    const hasPlaneSelected = window.location.search.includes('flight=');
+    if (hasPlaneSelected) return;
 
-    const size = Math.max(width, height);
+    if (!initialParams) return;
 
-    if (initialParams) {
-      mapShift.current.x = initialParams.x * size;
-      mapShift.current.y = initialParams.y * size;
+    const size = getWindowSize();
 
-      // update container
-      container!.style.setProperty('--x', `${mapShift.current.x}px`);
-      container!.style.setProperty('--y', `${mapShift.current.y}px`);
-    }
+    mapShift.current.x = initialParams.x * size;
+    mapShift.current.y = initialParams.y * size;
+
+    // update container
+    container!.style.setProperty('--x', `${mapShift.current.x}px`);
+    container!.style.setProperty('--y', `${mapShift.current.y}px`);
   }, [initialParams]);
 
+  useEffect(() => {
+    const callbackId = subscribableSetMap.addCallback((lat, lng) => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      const { relativeLat, relativeLng } = geoToRelative(lat, lng);
+
+      console.log('relativeLat', relativeLat, 'relativeLng', relativeLng);
+
+      const mapSize = getWindowSize();
+
+      // Multiply by mapSize to get the actual pixel offset
+      mapShift.current.x = -relativeLng * mapSize;
+      mapShift.current.y = -relativeLat * mapSize; // Negate latitude because y increases downwards in CSS
+
+      container!.style.setProperty('--x', `${mapShift.current.x}px`);
+      container!.style.setProperty('--y', `${mapShift.current.y}px`);
+    });
+
+    usePlanesStore.setState({ mapReady: true });
+
+    return () => {
+      subscribableSetMap.removeCallback(callbackId);
+    };
+  }, []);
+
+  /** Handle dragging */
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -154,8 +212,6 @@ export function DraggableStaticMap({ children }: DraggableStaticMapProps) {
     }
 
     function handleClick(event: MouseEvent) {
-      console.log('clicked', event.defaultPrevented);
-
       if (event.defaultPrevented) return;
 
       usePlanesStore.setState({ selectedFlight: null });
