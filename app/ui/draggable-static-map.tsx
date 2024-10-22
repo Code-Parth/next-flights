@@ -3,8 +3,8 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useStateToRef } from '@/app/hooks/use-state-to-ref';
-import { usePlanesStore } from '../hooks/use-planes';
-import { subscribable } from '../utils/subscribable';
+import { usePlanesStore } from '@/app/hooks/use-planes';
+import { subscribable } from '@/app/utils/subscribable';
 import { geocode } from './geocode';
 import { getMapBounds } from './get-map-bounds';
 
