@@ -5,8 +5,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useStateToRef } from '@/app/hooks/use-state-to-ref';
 import { usePlanesStore } from '@/app/hooks/use-planes';
 import { subscribable } from '@/app/utils/subscribable';
-import { geocode } from './geocode';
-import { getMapBounds } from './get-map-bounds';
+import { geocode } from '../utils/geocode';
+import { getMapBounds } from '../utils/get-map-bounds';
 
 interface DraggableStaticMapProps {
   children: React.ReactNode;

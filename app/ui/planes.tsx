@@ -1,14 +1,14 @@
 'use client';
 
 import { CSSProperties, useEffect, useMemo } from 'react';
-import { Flight } from './get-flights';
-import { geocode } from './geocode';
-import { getMapBounds, MapBounds } from './get-map-bounds';
+import { Flight } from '../utils/get-flights';
+import { geocode } from '../utils/geocode';
+import { getMapBounds, MapBounds } from '../utils/get-map-bounds';
 import { useParams } from 'next/navigation';
 import PlaneMarkerSrc from '@/app/assets/plane-marker.svg';
 import Image from 'next/image';
 import { usePlanesStore } from '@/app/hooks/use-planes';
-import { clx } from './clx';
+import { clx } from '../utils/clx';
 import { subscribableSetMap } from './draggable-static-map';
 
 export function Planes({ flights }: { flights: Flight[] }) {

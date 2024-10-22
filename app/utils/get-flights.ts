@@ -1,4 +1,4 @@
-import { geocode } from '@/app/ui/geocode';
+import { geocode } from '@/app/utils/geocode';
 import { getBoundsOfDistance } from 'geolib';
 
 export async function getFlights(params: Promise<{ airport: string }>) {

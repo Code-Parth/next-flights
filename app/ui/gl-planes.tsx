@@ -2,7 +2,7 @@
 
 import { Marker } from 'mapbox-gl';
 import { useMap } from '../hooks/use-map';
-import { Flight } from './get-flights';
+import { Flight } from '../utils/get-flights';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import Image from 'next/image';

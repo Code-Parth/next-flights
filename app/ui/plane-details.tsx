@@ -4,7 +4,7 @@ import BackgroundGlow from './assets/backgruond-glow.svg';
 import Plane from './assets/plane.svg';
 import Stars from './assets/stars.svg';
 import { PlaneDetailsType } from './types';
-import { planeDetailsEndpoint } from './constants';
+import { planeDetailsEndpoint } from '../utils/constants';
 
 async function getPlaneDetails(id: string) {
   return await fetch(`${planeDetailsEndpoint}/${id}`).then<PlaneDetailsType>(

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Flight } from "../ui/get-flights";
+import { Flight } from "../utils/get-flights";
 
 interface UsePlanesStore {
   selectedFlight: Flight | null;

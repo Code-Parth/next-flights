@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { getFlightTracks } from "./get-flight-tracks";
+import { getFlightTracks } from "../utils/get-flight-tracks";
 import { useMap } from "@/app/hooks/use-map";
 
 export function PlaneTrack({ id, timestamp, currentLat, currentLon }: { id: string, timestamp: string, currentLat: number, currentLon: number }) {

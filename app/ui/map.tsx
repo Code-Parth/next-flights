@@ -1,6 +1,6 @@
-import { geocode } from '@/app/ui/geocode';
+import { geocode } from '@/app/utils/geocode';
 import Image from 'next/image';
-import { getMapBounds } from './get-map-bounds';
+import { getMapBounds } from '../utils/get-map-bounds';
 import { DraggableStaticMap } from './draggable-static-map';
 import { CSSProperties } from 'react';
 import { FlightDetails } from './flight-details';
