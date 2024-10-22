@@ -1,4 +1,7 @@
 export async function GET(request: Request) {
+  // artificial delay
+  await new Promise((resolve) => setTimeout(resolve, 700));
+
   return Response.json({
     registration_number: 'N152FE',
     model_name: 'Airbus A320',
