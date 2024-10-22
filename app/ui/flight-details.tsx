@@ -4,7 +4,6 @@ import { usePlanesStore } from '../hooks/use-planes';
 
 export function FlightDetails() {
   const flight = usePlanesStore((s) => s.selectedFlight);
-
   if (!flight) return null;
 
   return (

@@ -27,7 +27,7 @@ export async function FlightActivity({
   const activity = await getFlightActivity(id);
 
   return (
-    <div>
+    <div className="text-white">
       <h2 className="text-4xl">Flights</h2>
       <pre>{JSON.stringify(activity, null, 2)}</pre>
     </div>
