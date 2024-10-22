@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { usePlanesStore } from '../hooks/use-planes';
 
 export function FlightDetails() {
@@ -19,12 +20,12 @@ export function FlightDetails() {
               <b className="opacity-50">Longitude</b> {flight.lon}
             </p>
           </div>
-          <a
+          <Link
             href={`/flights/${flight.callsign}`}
             className="p-2 bg-blue leading-none uppercase text-sm font-mono"
           >
             Flight details
-          </a>
+          </Link>
         </div>
       </div>
     </div>

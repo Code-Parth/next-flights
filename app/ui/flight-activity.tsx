@@ -1,4 +1,108 @@
+import { FlightChunkDetail } from './flight-chunk-detail';
+
+export interface FlightActivity {
+  status: 'landed' | 'active';
+  statusString: string;
+  arrival: {
+    airport: string;
+    scheduled: string;
+    iata: string;
+    estimated: string;
+  };
+  departure: {
+    airport: string;
+    scheduled: string;
+    iata: string;
+    estimated: string;
+  };
+}
+
 async function getFlightActivity(id: string) {
+  const activity: FlightActivity[] = [
+    {
+      status: 'active',
+      statusString: 'Landing in 1H 10M',
+      arrival: {
+        airport: 'San Francisco',
+        scheduled: '2024-10-22',
+        iata: 'SFO',
+        estimated: '2024-10-22',
+      },
+      departure: {
+        airport: 'New York',
+        scheduled: '2024-10-22',
+        iata: 'JFK',
+        estimated: '2024-10-22',
+      },
+    },
+    {
+      status: 'landed',
+      statusString: 'Landed at 10:30 AM',
+      arrival: {
+        airport: 'San Francisco',
+        scheduled: '2024-10-22',
+        iata: 'SFO',
+        estimated: '2024-10-22',
+      },
+      departure: {
+        airport: 'New York',
+        scheduled: '2024-10-22',
+        iata: 'JFK',
+        estimated: '2024-10-22',
+      },
+    },
+    {
+      status: 'landed',
+      statusString: 'Landed at 11:30 AM',
+      arrival: {
+        airport: 'San Francisco',
+        scheduled: '2024-10-22',
+        iata: 'SFO',
+        estimated: '2024-10-22',
+      },
+      departure: {
+        airport: 'New York',
+        scheduled: '2024-10-22',
+        iata: 'JFK',
+        estimated: '2024-10-22',
+      },
+    },
+    {
+      status: 'landed',
+      statusString: 'Landed at 10:30 AM',
+      arrival: {
+        airport: 'San Francisco',
+        scheduled: '2024-10-22',
+        iata: 'SFO',
+        estimated: '2024-10-22',
+      },
+      departure: {
+        airport: 'New York',
+        scheduled: '2024-10-22',
+        iata: 'JFK',
+        estimated: '2024-10-22',
+      },
+    },
+    {
+      status: 'landed',
+      statusString: 'Landed at 11:30 AM',
+      arrival: {
+        airport: 'San Francisco',
+        scheduled: '2024-10-22',
+        iata: 'SFO',
+        estimated: '2024-10-22',
+      },
+      departure: {
+        airport: 'New York',
+        scheduled: '2024-10-22',
+        iata: 'JFK',
+        estimated: '2024-10-22',
+      },
+    },
+  ];
+
+  return activity;
+
   const baseUrl = 'https://api.aviationstack.com/v1/flights';
   const query = new URLSearchParams({
     access_key: process.env.AVIATIONSTACK_API_TOKEN!,
@@ -28,8 +132,12 @@ export async function FlightActivity({
 
   return (
     <div className="text-white">
-      <h2 className="text-4xl">Flights</h2>
-      <pre>{JSON.stringify(activity, null, 2)}</pre>
+      <h2 className="text-4xl">Recent activity</h2>
+      <div className="py-4">
+        {activity.map((flight, i) => (
+          <FlightChunkDetail key={i} flight={flight} />
+        ))}
+      </div>
     </div>
   );
 }
@@ -41,10 +149,10 @@ type AviationStackResponse = {
     count: number;
     total: number;
   };
-  data: Array<Flight>;
+  data: Array<FlightActivity>;
 };
 
-type Flight = {
+export type FlightActivityReal = {
   flight_date: string;
   flight_status: FlightStatus;
   departure: Airport & FlightTiming;
