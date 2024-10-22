@@ -7,8 +7,8 @@ import { PlaneDetailsType } from './types';
 import { planeDetailsEndpoint } from './constants';
 
 async function getPlaneDetails(id: string) {
-  return await fetch(`${planeDetailsEndpoint}/${id}`).then(
-    (x) => x.json() as Promise<PlaneDetailsType>,
+  return await fetch(`${planeDetailsEndpoint}/${id}`).then<PlaneDetailsType>(
+    (x) => x.json(),
   );
 }
 
