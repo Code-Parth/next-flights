@@ -27,7 +27,7 @@ export async function Map({ params, children }: StaticMapProps) {
   );
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden">
+    <div className="relative w-screen h-screen overflow-hidden bg-[#1f1f1f]">
       <DraggableStaticMap>
         {mapsUrls.map(({ url, shift }) => (
           <Image

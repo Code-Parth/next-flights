@@ -1,3 +1,9 @@
+import Image from 'next/image';
+
+import BackgroundGlow from './assets/backgruond-glow.svg';
+import Plane from './assets/plane.svg';
+import Stars from './assets/stars.svg';
+
 async function getPlaneDetails(id: string) {
   // Hard code ACME plane
   // Pick a nice model and source information
@@ -5,14 +11,15 @@ async function getPlaneDetails(id: string) {
     registration_number: 'N152FE',
     model_name: 'Airbus A320',
     model_code: 'A320',
-    miles_flown: '100000',
+    miles_flown: '300k',
     engines_count: '2',
     engines_type: 'Turbofan',
     plane_age: '10',
     plane_status: 'active',
-    description: '...',
+    description:
+      'The Airbus A320 is one of the most popular commercial aircraft models in the world, often used for short to medium-haul flights.',
     airline: {
-      name: 'ACME Airline',
+      name: 'ACME Airways',
       code: 'ACME',
       country: 'USA',
     },
@@ -28,19 +35,46 @@ export async function PlaneDetails({
   const plane = await getPlaneDetails(id);
 
   return (
-    <div>
-      <h2 className="text-4xl">Plane</h2>
-      <h3>{plane.model_name}</h3>
-      <h3>{plane.registration_number}</h3>
-      <h3>{plane.airline.name}</h3>
-      <h3>{plane.airline.code}</h3>
-      <h3>{plane.airline.country}</h3>
-      <h3>{plane.miles_flown}</h3>
-      <h3>{plane.engines_count}</h3>
-      <h3>{plane.engines_type}</h3>
-      <h3>{plane.plane_age}</h3>
-      <h3>{plane.plane_status}</h3>
-      <p>{plane.description}</p>
+    <div className="text-white">
+      <div className="relative aspect-video">
+        <div className="absolute left-0 top-0 w-full h-full">
+          <Image
+            className="absolute inset-0 object-cover"
+            src={BackgroundGlow}
+            alt=""
+            fill
+          />
+          <Image
+            className="absolute inset-0 mix-blend-lighten object-contain"
+            src={Stars}
+            alt="starts"
+            fill
+          />
+          <div className="absolute inset-4">
+            <Image
+              className="absolute inset-0 object-contain"
+              src={Plane}
+              alt="plane"
+              fill
+            />
+          </div>
+        </div>
+        <div className="relative p-4 text-lg font-bold">
+          <h1 className="relative">
+            {plane.model_name}/{plane.registration_number}
+          </h1>
+          <p>{plane.airline.name}</p>
+        </div>
+      </div>
+      <div className="p-4">
+        <div className="flex gap-4 leading-tight text-sm opacity-70">
+          <div className="shrink-0">
+            <p className="leading-none">{plane.plane_age} years old</p>
+            <p className="leading-none">{plane.miles_flown} miles</p>
+          </div>
+          <p className="text-pretty">{plane.description}</p>
+        </div>
+      </div>
     </div>
   );
 }
