@@ -5,7 +5,7 @@ import { Flight } from '../utils/get-flights';
 import { geocode } from '../utils/geocode';
 import { getMapBounds, MapBounds } from '../utils/get-map-bounds';
 import { useParams } from 'next/navigation';
-import PlaneMarkerSrc from '@/app/assets/plane-marker.svg';
+import PlaneMarkerSrc from './assets/plane-marker.svg';
 import Image from 'next/image';
 import { usePlanesStore } from '@/app/hooks/use-planes';
 import { clx } from '../utils/clx';

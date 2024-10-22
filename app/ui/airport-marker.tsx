@@ -1,6 +1,6 @@
 'use client';
 
-import CircleMarker from '@/app/assets/circle-marker.svg';
+import CircleMarker from './assets/circle-marker.svg';
 import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 import { useMap } from '../hooks/use-map';

@@ -7,7 +7,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import Image from 'next/image';
 
-import PlaneMarker from '@/app/assets/plane-marker.svg';
+import PlaneMarker from './assets/plane-marker.svg';
 import { PlaneTrack } from './flight-track';
 
 /** Based on https://gist.github.com/chriswhong/8977c0d4e869e9eaf06b4e9fda80f3ab */
