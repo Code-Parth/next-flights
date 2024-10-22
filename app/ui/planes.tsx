@@ -60,8 +60,7 @@ function PlaneMarker({ bounds, flight }: PlaneMarkerProps) {
     const urlParams = new URLSearchParams(window.location.search);
     const flightId = urlParams.get('flight');
     if (flightId === flight.fr24_id) {
-      console.log('setting map');
-      subscribableSetMap.runCallbacks(flight.lat, flight.lon);
+      subscribableSetMap.runCallbacks(flight.lat, flight.lon, true);
       usePlanesStore.setState({ selectedFlight: flight });
     }
   }, [mapReady]);
@@ -86,6 +85,7 @@ function PlaneMarker({ bounds, flight }: PlaneMarkerProps) {
           '',
           `${window.location.pathname}?${currentUrlParams.toString()}`,
         );
+        subscribableSetMap.runCallbacks(flight.lat, flight.lon);
       }}
     >
       <div

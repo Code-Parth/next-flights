@@ -16,7 +16,7 @@ const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
 
 export const subscribableSetMap =
-  subscribable<(lat: number, log: number) => void>();
+  subscribable<(lat: number, log: number, teleport?: boolean) => void>();
 
 function getWindowSize() {
   const width = document.body.clientWidth;
@@ -107,20 +107,33 @@ export function DraggableStaticMap({ children }: DraggableStaticMapProps) {
     container!.style.setProperty('--y', `${mapShift.current.y}px`);
   }, [initialParams]);
 
+  /** Move the map from planes component */
   useEffect(() => {
-    const callbackId = subscribableSetMap.addCallback((lat, lng) => {
+    let currentController: AbortController | null = null;
+
+    const callbackId = subscribableSetMap.addCallback((lat, lng, teleport) => {
+      // Cancel existing controller
+      currentController?.abort();
+
+      currentController = new AbortController();
+      // Calculate map positio
       const container = containerRef.current;
       if (!container) return;
-
       const { relativeLat, relativeLng } = geoToRelative(lat, lng);
-
-      console.log('relativeLat', relativeLat, 'relativeLng', relativeLng);
-
       const mapSize = getWindowSize();
-
-      // Multiply by mapSize to get the actual pixel offset
       mapShift.current.x = -relativeLng * mapSize;
-      mapShift.current.y = -relativeLat * mapSize; // Negate latitude because y increases downwards in CSS
+      mapShift.current.y = -relativeLat * mapSize;
+
+      if (!teleport) {
+        container!.style.setProperty(
+          'transition',
+          'transform 400ms cubic-bezier(0.23, 0, 0.17, 1)',
+        );
+        setTimeout(() => {
+          if (currentController?.signal.aborted) return;
+          container!.style.removeProperty('transition');
+        }, 400);
+      }
 
       container!.style.setProperty('--x', `${mapShift.current.x}px`);
       container!.style.setProperty('--y', `${mapShift.current.y}px`);
@@ -215,6 +228,14 @@ export function DraggableStaticMap({ children }: DraggableStaticMapProps) {
       if (event.defaultPrevented) return;
 
       usePlanesStore.setState({ selectedFlight: null });
+      //remove url params
+      const urlParams = new URLSearchParams(window.location.search);
+      urlParams.delete('flight');
+      window.history.replaceState(
+        null,
+        '',
+        `${pathnameRef.current}?${urlParams.toString()}`,
+      );
     }
 
     document.addEventListener('mousedown', handleMouseDown);
