@@ -1,4 +1,3 @@
-
 import { PlaneDetailsType } from "../ui/types";
 import { planeDetailsEndpoint } from "./constants";
 
