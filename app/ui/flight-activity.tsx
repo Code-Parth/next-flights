@@ -135,7 +135,7 @@ export async function FlightActivity({
       <h2 className="text-4xl p-4">Recent activity</h2>
       <div className="py-4 px-2">
         {activity.map((flight, i) => (
-          <div className="flex gap-2 items-stretch">
+          <div key={i} className="flex gap-2 items-stretch">
             <div className="w-[2rem] flex items-center flex-col">
               <div
                 className={clx(
