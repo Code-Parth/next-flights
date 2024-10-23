@@ -43,7 +43,7 @@ export async function PlaneDetails({
               alt="plane"
               fill
             />
-            <div className="absolute left-[57%] top-[46%] -translate-x-1/2 -translate-y-1/2">
+            <div className="absolute left-[61%] top-[54%] w-[5%] aspect-square -translate-x-1/2 -translate-y-1/2">
               <div className="plane-light" />
             </div>
           </div>

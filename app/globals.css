@@ -11,7 +11,7 @@ img {
 }
 
 .plane-light {
-  @apply absolute w-12 aspect-square rounded-full mix-blend-hard-light origin-center;
+  @apply absolute w-full h-full rounded-full mix-blend-hard-light origin-center;
   animation: plane-light-animation 5s ease-in-out infinite;
   background: radial-gradient(
       circle,
