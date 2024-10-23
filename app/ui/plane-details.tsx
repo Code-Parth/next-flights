@@ -1,5 +1,4 @@
 import Image from 'next/image';
-
 import BackgroundGlow from './assets/background-glow.svg';
 import Plane from './assets/plane.svg';
 import Stars from './assets/stars.svg';
