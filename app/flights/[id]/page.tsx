@@ -4,9 +4,11 @@ import { Suspense } from 'react';
 
 export default async function Page({ params }) {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <PlaneDetails params={params} />
-      <FlightActivity params={params} />
-    </Suspense>
+    <>
+      <Suspense fallback={<div>Loading...</div>}>
+        <PlaneDetails params={params} />
+        <FlightActivity params={params} />
+      </Suspense>
+    </>
   );
 }
