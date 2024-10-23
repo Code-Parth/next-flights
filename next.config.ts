@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     dynamicIO: true,
-    // serverComponentsHmrCache: false,
+    serverComponentsHmrCache: false,
   },
 };
 

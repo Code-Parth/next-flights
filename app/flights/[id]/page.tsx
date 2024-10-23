@@ -1,8 +1,8 @@
-import { FlightActivity } from '@/app/ui/flight-activity';
+import { FlightActivity } from '@/app/ui/flight-activity-fix';
 import { PlaneDetails } from '@/app/ui/plane-details';
 import { Suspense } from 'react';
 
-export default async function Page({ params }: { params: Params }) {
+export default async function Page({ params }) {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <PlaneDetails params={params} />
@@ -10,5 +10,3 @@ export default async function Page({ params }: { params: Params }) {
     </Suspense>
   );
 }
-
-type Params = Promise<{ id: string }>;

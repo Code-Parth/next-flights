@@ -23,7 +23,7 @@ export async function PlaneDetails({
             alt=""
             fill
           />
-          <div className="stars-container absolute inset-0 mix-blend-lighten">
+          <div className="stars-container absolute inset-0 mix-blend-lighten opacity-60">
             <Image
               className="absolute inset-0 object-contain"
               src={Stars}
@@ -44,6 +44,9 @@ export async function PlaneDetails({
               alt="plane"
               fill
             />
+            <div className="absolute left-[57%] top-[46%] -translate-x-1/2 -translate-y-1/2">
+              <div className="plane-light" />
+            </div>
           </div>
         </div>
         <div className="relative p-4 text-lg font-bold">

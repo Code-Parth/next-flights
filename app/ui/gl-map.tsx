@@ -12,15 +12,13 @@ import {
 import { MapType } from './types';
 import { MapContext } from '@/app/hooks/use-map';
 import { AirportMarker } from './airport-marker';
+import { geocode } from '../utils/geocode';
 
 const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN as string;
 
 if (!mapboxToken) throw new Error('NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN is not set');
 
-const INITIAL_CENTER = [
-  -122.45218475296957, 37.66019807169039,
-] as const satisfies LngLatLike;
-const INITIAL_ZOOM = 9;
+const INITIAL_ZOOM = 10;
 
 interface MapProviderProps {
   children?: ReactNode;
@@ -33,10 +31,11 @@ export function MapProvider({ children, mapContainerRef }: MapProviderProps) {
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
+    const center = geocode('sfo');
     mapboxgl.accessToken = mapboxToken;
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      center: INITIAL_CENTER,
+      center: [center.longitude, center.latitude],
       zoom: INITIAL_ZOOM,
       attributionControl: false,
       logoPosition: 'top-right',
@@ -64,19 +63,21 @@ interface MapProps {
   params: Promise<{ airport: string }>;
 }
 
-export function GlMap({ children }: PropsWithChildren<MapProps>) {
+export function Map({ children }: PropsWithChildren<MapProps>) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   return (
-    <div className="relative w-full h-full">
-      <div
-        id="map-container"
-        ref={mapContainerRef}
-        className="absolute inset-0 h-full w-full"
-      />
-      <MapProvider mapContainerRef={mapContainerRef}>
-        <AirportMarker />
-        {children}
-      </MapProvider>
+    <div className="w-screen h-screen">
+      <div className="relative w-full h-full">
+        <div
+          id="map-container"
+          ref={mapContainerRef}
+          className="absolute inset-0 h-full w-full"
+        />
+        <MapProvider mapContainerRef={mapContainerRef}>
+          <AirportMarker />
+          {children}
+        </MapProvider>
+      </div>
     </div>
   );
 }

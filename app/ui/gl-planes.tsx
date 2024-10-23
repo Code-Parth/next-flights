@@ -36,10 +36,10 @@ class ClickableMarker extends Marker {
 }
 
 interface PlanesProps {
-  planes: Flight[];
+  flights: Flight[];
 }
 
-export function GlPlanes({ planes }: PlanesProps) {
+export function Planes({ flights }: PlanesProps) {
   const { map } = useMap();
 
   const planeMarkerRef = useRef<HTMLDivElement | null>(null);
@@ -51,15 +51,15 @@ export function GlPlanes({ planes }: PlanesProps) {
   const selectedPlaneData = useMemo(() => {
     if (selectedPlaneIndex === null) return null;
 
-    return planes[selectedPlaneIndex];
-  }, [selectedPlaneIndex, planes]);
+    return flights[selectedPlaneIndex];
+  }, [selectedPlaneIndex, flights]);
 
   useEffect(() => {
     const planeMarkerEl = planeMarkerRef.current;
 
     if (!planeMarkerEl) return;
 
-    const planeMarkers = planes.map((plane, index) => {
+    const planeMarkers = flights.map((plane, index) => {
       const planeMarker = new ClickableMarker({
         element: planeMarkerEl.cloneNode(true) as HTMLElement,
         rotation: plane.track,
@@ -80,7 +80,7 @@ export function GlPlanes({ planes }: PlanesProps) {
     return () => {
       planeMarkers.forEach((marker) => marker.remove());
     };
-  }, [planes, map]);
+  }, [flights, map]);
 
   return (
     <>
