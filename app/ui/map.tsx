@@ -10,7 +10,7 @@ const MAP_HEIGHT = 844;
 
 interface StaticMapProps {
   params: Promise<{ airport: string }>;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const shifts: [number, number][] = [];
